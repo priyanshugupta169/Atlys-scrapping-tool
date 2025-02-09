@@ -7,6 +7,8 @@ class StorageInterface(ABC):
     def save_data(self, data: list):
         pass
 
+# The `JSONStorage` class implements a method to save a list of data to a JSON file, overwriting any
+# existing content.
 class JSONStorage(StorageInterface):
     def __init__(self, file_path: str = None):
         self.file_path = file_path or settings.STORAGE_FILE

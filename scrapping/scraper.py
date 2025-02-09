@@ -42,6 +42,13 @@ class Scraper:
             os.makedirs(settings.IMAGE_DIR)
 
     def scrape(self) -> int:
+        """
+        The `scrape` function iterates through pages, scrapes product data, checks for updates, saves
+        the data, and notifies the results.
+        :return: The `scrape` method is returning the total number of products that were scraped during
+        the process. This is indicated by the `return len(self.scraped_products)` statement at the end
+        of the method.
+        """
         total_updated = 0
         for page in range(1, self.page_limit + 1):
             print(f"Scraping page {page}...")
@@ -70,6 +77,17 @@ class Scraper:
         return len(self.scraped_products)
 
     def fetch_page(self, url: str, retries: int = 3) -> str:
+        """
+        The `fetch_page` function retrieves the content of a web page given a URL with optional retries
+        in case of errors.
+        
+        :param url: page url in string
+        :param retries: no. of retries, default is 3
+        :return: The `fetch_page` method returns a string containing the text content of the fetched web
+        page if the HTTP response status code is 200. If the status code is a server error (>= 500), it
+        retries after a delay specified by `self.retry_delay`. If the status code is not 200 or a server
+        error, it prints a message and returns `None`. If there is a `
+        """
         attempt = 0
         while attempt < retries:
             try:
@@ -90,6 +108,14 @@ class Scraper:
         return None
 
     def parse_products(self, html: str) -> list:
+        """
+        The `parse_products` function extracts product information such as title, price, and image from
+        HTML using BeautifulSoup in Python.
+        
+        :param html: HTML text response from the page
+        :return: returns a list of dictionaries, where each dictionary
+        represents a product.
+        """
         soup = BeautifulSoup(html, "html.parser")
         products = []
         # Assuming products are contained within <li class="product"> elements.
@@ -123,6 +149,10 @@ class Scraper:
         return products
 
     def extract_price(self, price_text: str) -> float:
+        """
+        The function `extract_price` takes a string containing price information, extracts numerical
+        values, removes formatting and currency symbols, and returns the price as a float.
+        """
         # Remove any currency symbols and formatting.
         import re
         price_numbers = re.findall(r"[\d\.,]+", price_text)
@@ -135,6 +165,14 @@ class Scraper:
         return 0.0
 
     def download_image(self, img_url: str, product_title: str) -> str:
+        """
+        The function `download_image` downloads an image from a given URL, sanitizes the product title
+        to create a valid filename, and saves the image to a specified directory.
+        
+        :param img_url: represents the URL of the image that you want to download
+        :param product_title: represents the title of the product for which the image is being downloaded.
+        :return: returns a string representing the filepath where the downloaded image is saved.
+        """
         try:
             response = requests.get(img_url, stream=True, proxies=self.proxies, timeout=10)
             if response.status_code == 200:
